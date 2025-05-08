@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:material="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- 1. Optional Icon -->
+    <ImageView
+        android:id="@+id/dialog_icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="thickness"
+        android:src="@drawable/ic_thickness_24px"/>
+
+    <!-- 2. Title -->
+    <TextView
+        android:id="@+id/dialog_title"
+        style="@style/TextAppearance.Material3.HeadlineSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Set Brush Size"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <RadioGroup
+            android:id="@+id/dialog_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:checkedButton="@id/thickness_standard">
+
+            <RadioButton
+                android:id="@+id/thickness_ultrafine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Ultra-Fine (1 px)" />
+
+            <RadioButton
+                android:id="@+id/thickness_fine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fine (3 px)" />
+
+            <RadioButton
+                android:id="@+id/thickness_standard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Standard (7 px)" />
+
+            <RadioButton
+                android:id="@+id/thickness_medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Medium (15 px)" />
+
+            <RadioButton
+                android:id="@+id/thickness_broad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Broad (30 px)" />
+
+            <RadioButton
+                android:id="@+id/thickness_large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Large (50 px)" />
+        </RadioGroup>
+
+
+    </ScrollView>
+
+</LinearLayout>
