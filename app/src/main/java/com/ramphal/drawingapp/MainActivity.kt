@@ -1,11 +1,17 @@
 package com.ramphal.drawingapp
 
 import android.Manifest
+import android.R.attr.bitmap
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RadioGroup
 import androidx.activity.enableEdgeToEdge
@@ -17,9 +23,17 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.core.graphics.createBitmap
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,10 +60,17 @@ class MainActivity : AppCompatActivity() {
                 val isGranted = it.value
                 val view = findViewById<View>(R.id.main)
                 if (isGranted){
-                    val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    openGalleryLauncher.launch(pickIntent)
+                    Snackbar.make(view,
+                        "Permission granted now you can add image",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }else{
                     if (permissionName == Manifest.permission.READ_EXTERNAL_STORAGE){
+                        Snackbar.make(view,
+                            "Oops you just denied the permission",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }else if (permissionName == Manifest.permission.WRITE_EXTERNAL_STORAGE){
                         Snackbar.make(view,
                             "Oops you just denied the permission",
                             Snackbar.LENGTH_LONG
@@ -88,7 +109,13 @@ class MainActivity : AppCompatActivity() {
 
         val addImage: MaterialButton = findViewById(R.id.btn_add_image)
         addImage.setOnClickListener {
-            requestStoragePermission()
+            if (isReadStorageAllowed()){
+                val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                openGalleryLauncher.launch(pickIntent)
+            }else{
+                requestStoragePermission()
+            }
+
         }
 
         val btnColor: MaterialButton = findViewById(R.id.btn_color)
@@ -109,10 +136,31 @@ class MainActivity : AppCompatActivity() {
             updateUndoRedoButtonState()
         }
 
+        val btnSave: MaterialButton = findViewById(R.id.btn_save)
+        btnSave.setOnClickListener {
+            if (isReadStorageAllowed()) {
+                lifecycleScope.launch {
+                    val drawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
+                    val bitmap = getBitmapFromView(drawingView)
+                    download(bitmap)
+                }
+            }else{
+                requestStoragePermission()
+            }
+        }
+
         drawingView?.onStateChangeListener = {
             updateUndoRedoButtonState()
         }
 
+    }
+
+    private fun isReadStorageAllowed(): Boolean{
+        val result = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        return result == PackageManager.PERMISSION_GRANTED
     }
 
     private fun updateUndoRedoButtonState() {
@@ -130,10 +178,19 @@ class MainActivity : AppCompatActivity() {
                 title = "Storage Permission Required",
                 message = "Storage permission is necessary for this feature. Please enable it in app settings."
             )
+        }else if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        ){
+            showRationalDialog(
+                title = "Storage Permission Required",
+                message = "Storage permission is necessary for this feature. Please enable it in app settings."
+            )
         }else{
             requestPermission.launch(
                 arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
             )
         }
@@ -204,7 +261,53 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun getBitmapFromView(view: View): Bitmap{
+        val returnedBitmap = createBitmap(view.width, view.height)
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable = view.background
+        if (bgDrawable != null){
+            bgDrawable.draw(canvas)
+        }else {
+            canvas.drawColor(ContextCompat.getColor(this, R.color.background))
+        }
+        view.draw(canvas)
+        return returnedBitmap
+    }
 
+    private suspend fun download(mBitmap: Bitmap?): String{
+        var result = ""
+        withContext(Dispatchers.IO){
+            if (mBitmap != null){
+                try {
+                    val bytes = ByteArrayOutputStream()
+                    mBitmap.compress(Bitmap.CompressFormat.PNG, 90, bytes)
+                    val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    val drawingsDir = File(downloadsDir, "My Drawings")
+                    if (!drawingsDir.exists()) {
+                        drawingsDir.mkdirs()
+                    }
+                    val timestamp = System.currentTimeMillis() / 1000
+                    val fileName = "$timestamp.png"
+                    val f = File(drawingsDir, fileName)
+                    val fo = FileOutputStream(f)
+                    fo.write(bytes.toByteArray())
+                    fo.close()
+                    result = f.absolutePath
+                    runOnUiThread {
+                        if (result.isNotEmpty()){
+                            Snackbar.make(findViewById(R.id.main), "Image saved successfully : $result", Snackbar.LENGTH_LONG).show()
+                        }else{
+                            Snackbar.make(findViewById(R.id.main), "Something went wrong while saving the image", Snackbar.LENGTH_LONG).show()
+                        }
+                    }
+                }catch (e: Exception){
+                    result = ""
+                    e.printStackTrace()
+                }
+            }
+        }
+        return result
+    }
 
 
 }
