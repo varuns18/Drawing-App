@@ -3,14 +3,12 @@ package com.ramphal.drawingapp
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
-import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 
@@ -24,9 +22,43 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
     private var color = ContextCompat.getColor(context, R.color.onSurface)
     private var canvas: Canvas? = null
     private var mPaths = ArrayList<CustomPath>()
+    private var mUndoPaths = ArrayList<CustomPath>()
 
     init {
         setUpDrawing()
+    }
+
+    fun canUndo(): Boolean {
+        return mPaths.isNotEmpty()
+    }
+
+    fun canRedo(): Boolean {
+        return mUndoPaths.isNotEmpty()
+    }
+
+    fun clearDrawing() {
+        mPaths.clear()
+        mUndoPaths.clear() // Clearing the canvas also affects undo/redo
+        onStateChangeListener?.invoke() // <--- Call this here too!
+        invalidate()
+    }
+
+    var onStateChangeListener: (() -> Unit)? = null
+
+    fun onClickUndo(){
+        if (mPaths.isNotEmpty()){
+            mUndoPaths.add(mPaths.removeAt(mPaths.size - 1))
+            invalidate()
+        }
+        onStateChangeListener?.invoke()
+    }
+
+    fun onClickRedo() {
+        if (mUndoPaths.isNotEmpty()) {
+            mPaths.add(mUndoPaths.removeAt(mUndoPaths.size - 1))
+            invalidate()
+        }
+        onStateChangeListener?.invoke()
     }
 
     private fun setUpDrawing(){
@@ -72,6 +104,9 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
             MotionEvent.ACTION_UP -> {
                 mPaths.add(mDrawPath!!)
                 mDrawPath = CustomPath(color = color, brushThickness = mBrushSize)
+                onStateChangeListener?.invoke()
+                mUndoPaths.clear()
+                onStateChangeListener?.invoke()
             }
             else -> return false
         }

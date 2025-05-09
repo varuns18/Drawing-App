@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Background"
-            android:src="@drawable/ic_launcher_background"
             android:layout_margin="8dp"/>
 
         <com.ramphal.drawingapp.DrawingView
@@ -46,7 +45,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_options"
+        android:id="@+id/btn_color"
         style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,6 +66,32 @@
         app:icon="@drawable/ic_image_24px"
         android:contentDescription="add image"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_options"/>
+        app:layout_constraintEnd_toStartOf="@id/btn_color"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_undo"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="8dp"
+        app:icon="@drawable/ic_undo_24px"
+        android:enabled="false"
+        android:contentDescription="undo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_add_image"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_redo"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="8dp"
+        app:icon="@drawable/ic_redo_24px"
+        android:enabled="false"
+        android:contentDescription="redo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_undo"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
