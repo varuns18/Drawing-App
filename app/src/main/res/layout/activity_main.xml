@@ -45,41 +45,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_color"
-        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
-        app:icon="@drawable/ic_colors_24px"
-        android:contentDescription="change color"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_thickness"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_add_image"
-        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
-        app:icon="@drawable/ic_image_24px"
-        android:contentDescription="add image"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_color"/>
-
-    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_undo"
         style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
         app:icon="@drawable/ic_undo_24px"
-        android:enabled="false"
+        android:visibility="gone"
         android:contentDescription="undo"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_add_image"/>
+        app:layout_constraintEnd_toStartOf="@+id/btn_redo"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_redo"
@@ -87,23 +62,54 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
-        app:icon="@drawable/ic_redo_24px"
-        android:enabled="false"
         android:contentDescription="redo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_undo"/>
+        android:visibility="gone"
+        app:icon="@drawable/ic_redo_24px"
+        app:layout_constraintEnd_toStartOf="@+id/btn_thickness"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_color"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:contentDescription="change color"
+        app:icon="@drawable/ic_colors_24px"
+        app:layout_constraintEnd_toEndOf="@+id/btn_thickness"
+        app:layout_constraintTop_toBottomOf="@+id/btn_thickness" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_image"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:icon="@drawable/ic_image_24px"
+        android:contentDescription="add image"
+        app:layout_constraintEnd_toEndOf="@+id/btn_color"
+        app:layout_constraintTop_toBottomOf="@+id/btn_color"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_save"
         style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         app:icon="@drawable/ic_save_24px"
         android:contentDescription="Save"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_redo"/>
+        app:layout_constraintEnd_toEndOf="@+id/btn_add_image"
+        app:layout_constraintTop_toBottomOf="@+id/btn_add_image"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_clean_all"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:icon="@drawable/ic_clean_all_24px"
+        android:contentDescription="Save"
+        app:layout_constraintEnd_toEndOf="@+id/btn_save"
+        app:layout_constraintTop_toBottomOf="@+id/btn_save"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

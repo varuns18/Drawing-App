@@ -136,6 +136,13 @@ class MainActivity : AppCompatActivity() {
             updateUndoRedoButtonState()
         }
 
+        val btnCleanAll: MaterialButton = findViewById(R.id.btn_clean_all)
+        btnCleanAll.setOnClickListener {
+            val imageBackground: ImageView = findViewById(R.id.iv_background)
+            imageBackground.setImageDrawable(null)
+            drawingView?.clearDrawing()
+        }
+
         val btnSave: MaterialButton = findViewById(R.id.btn_save)
         btnSave.setOnClickListener {
             if (isReadStorageAllowed()) {
@@ -164,8 +171,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUndoRedoButtonState() {
-        btnUndo?.isEnabled = drawingView?.canUndo() ?: false
-        btnRedo?.isEnabled = drawingView?.canRedo() ?: false
+        btnUndo?.visibility = if (drawingView?.canUndo() == true) View.VISIBLE else View.GONE
+        btnRedo?.visibility = if (drawingView?.canRedo() == true) View.VISIBLE else View.GONE
     }
 
     private fun requestStoragePermission(){
